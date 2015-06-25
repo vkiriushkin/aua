@@ -1,12 +1,15 @@
 package com.auto.data;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by vkiriushkin on 6/15/15.
  */
 public class Mark {
 
+    @SerializedName("value")
+    private int id;
     private String name;
-    private int value;
     private int count;
 
     public Mark() {
@@ -20,12 +23,12 @@ public class Mark {
         this.name = name;
     }
 
-    public int getValue() {
-        return value;
+    public int getId() {
+        return id;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getCount() {
@@ -39,8 +42,8 @@ public class Mark {
     @Override
     public String toString() {
         return "Mark{" +
-                "name='" + name + '\'' +
-                ", value=" + value +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", count=" + count +
                 '}';
     }

@@ -17,7 +17,6 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -32,8 +31,8 @@ public class App
 {
     public static void main( String[] args ) throws IOException {
 
-        String requiredMark = "Infiniti";
-        String requiredModel = "FX";
+        String requiredMark = "Audi";
+        String requiredModel = "RS6";
 
         Stopwatch overalStopWatch = Stopwatch.createStarted();
         System.out.println("----------------------------------------");
@@ -57,7 +56,7 @@ public class App
         //filter list of models based on required
         Stream<Mark> marksStream = marksList.stream().filter(mark -> mark.getName().equalsIgnoreCase(requiredMark));
 
-        int markId = marksStream.findFirst().get().getValue();
+        int markId = marksStream.findFirst().get().getId();
         ModelsRequest modelsRequest = new ModelsRequest(markId);
         String modelJSON = modelsRequest.getModels();
         System.out.println(modelJSON);
@@ -86,7 +85,7 @@ public class App
             System.out.println("*** Getting cars from page:" + (i+1) + " ***");
             stopwatch.start();
 
-            int modelId = model.getValue();
+            int modelId = model.getId();
             IDsRequest iDsRequest = new IDsRequest(i, markId, modelId);
             String idsJSON = iDsRequest.getIDs();
             JsonObject resultsObject = gson.fromJson(idsJSON, JsonObject.class);

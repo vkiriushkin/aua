@@ -5,8 +5,8 @@ package com.auto.data;
  */
 public class Model {
 
+    private int id;
     private String name;
-    private int value;
     private int count;
 
     public Model() {
@@ -20,12 +20,12 @@ public class Model {
         this.name = name;
     }
 
-    public int getValue() {
-        return value;
+    public int getId() {
+        return id;
     }
 
-    public void setValue(int value) {
-        this.value = value;
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getCount() {
@@ -39,8 +39,8 @@ public class Model {
     @Override
     public String toString() {
         return "Model{" +
-                "name='" + name + '\'' +
-                ", value=" + value +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", count=" + count +
                 '}';
     }
