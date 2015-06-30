@@ -1,6 +1,8 @@
 package com.auto.service;
 
 import com.auto.data.Mark;
+import com.auto.load.db.MarkDbLoader;
+import com.auto.load.web.MarkWebLoader;
 import com.auto.persistence.AbstractJDBCTemplate;
 import com.auto.request.MarksRequest;
 import com.google.gson.Gson;
@@ -19,28 +21,44 @@ import java.util.List;
  */
 public class MarkService {
 
-    private static final String INSERT_MARK = "INSERT INTO AUTOSTAT.MARK (ID,NAME,COUNT) VALUES(?,?,?);";
-    private static final String SELECT_ALL_MARKS = "SELECT ID,NAME,COUNT FROM AUTOSTAT.MARK";
+    private MarkDbLoader dbLoader;
+    private MarkWebLoader webLoader;
+
+    public MarkService() {
+        initLoaders();
+    }
+
+    public void initLoaders() {
+        dbLoader = MarkDbLoader.getInstance();
+        webLoader = MarkWebLoader.getInstance();
+    }
 
     public void updateAll(JdbcTemplate jdbcTemplate) throws IOException {
 
-        MarksRequest marksRequest = new MarksRequest();
-        String marksJSON = marksRequest.getModels();
-        System.out.println(marksJSON);
-
-        Gson gson = new Gson();
-        Type marksListType = new TypeToken<List<Mark>>(){}.getType();
-        List<Mark> marksList = gson.fromJson(marksJSON, marksListType);
-
-        for (Mark mark : marksList) {
-            jdbcTemplate.update(INSERT_MARK, mark.getId(), mark.getName(), mark.getCount());
-        }
+//        MarksRequest marksRequest = new MarksRequest();
+//        String marksJSON = marksRequest.getModels();
+//        System.out.println(marksJSON);
+//
+//        Gson gson = new Gson();
+//        Type marksListType = new TypeToken<List<Mark>>(){}.getType();
+//        List<Mark> marksList = gson.fromJson(marksJSON, marksListType);
+//
+//        for (Mark mark : marksList) {
+//            jdbcTemplate.update(INSERT_MARK, mark.getId(), mark.getName(), mark.getCount());
+//        }
     }
 
-    public List<Mark> getAllMarks(JdbcTemplate jdbcTemplate) {
-        List<Mark> markList  = jdbcTemplate.query(SELECT_ALL_MARKS,
-                new BeanPropertyRowMapper(Mark.class));
+    public List<Mark> getAllMarks() {
+        List<Mark> markList  = dbLoader.loadAll();
         return markList;
+    }
+
+    public Mark getMarkById(int markId) {
+        return dbLoader.loadMarkById(markId);
+    }
+
+    public Mark getMarkByName(String markName) {
+        return dbLoader.loadMarkByName(markName);
     }
 
     public static void main(String[] args) throws IOException {
@@ -52,9 +70,16 @@ public class MarkService {
 
 
         MarkService service = new MarkService();
-        service.updateAll(abstractJDBCTemplate.getJdbcTemplate());
+//        service.updateAll(abstractJDBCTemplate.getJdbcTemplate());
 
-        List<Mark> allMarks = service.getAllMarks(abstractJDBCTemplate.getJdbcTemplate());
+        Mark infinitiByName = service.getMarkByName("Infiniti");
+        System.out.println(infinitiByName);
+
+        Mark audiById = service.getMarkById(6);
+        System.out.println(audiById);
+
+
+        List<Mark> allMarks = service.getAllMarks();
         for (Mark mark : allMarks) {
             System.out.println(mark.toString());
         }

@@ -52,7 +52,7 @@ public class ModelService {
         AbstractJDBCTemplate abstractJDBCTemplate = (AbstractJDBCTemplate) context.getBean("autoJDBCTemplate");
 
         MarkService markService = new MarkService();
-        List<Mark> markList = markService.getAllMarks(abstractJDBCTemplate.getJdbcTemplate());
+        List<Mark> markList = markService.getAllMarks();
         Mark m = markList.stream().filter(mark -> mark.getName().equalsIgnoreCase(requestedmark)).findFirst().get();
 
         System.out.println(m.toString());
