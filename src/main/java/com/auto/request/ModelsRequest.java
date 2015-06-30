@@ -16,15 +16,15 @@ import java.io.IOException;
 public class ModelsRequest {
 
     private static final String REQUEST_TEMPLATE = "http://auto.ria.com/api/categories/1/marks/%d/models/_with_count";
-    private int modelId;
+    private int markId;
 
-    public ModelsRequest(int modelId) {
-        this.modelId = modelId;
+    public ModelsRequest(int markId) {
+        this.markId = markId;
     }
 
     public String getModels() throws IOException {
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        HttpGet httpget = new HttpGet(String.format(REQUEST_TEMPLATE, modelId));
+        HttpGet httpget = new HttpGet(String.format(REQUEST_TEMPLATE, markId));
         System.out.println("Executing request " + httpget.getRequestLine());
 
         // Create a custom response handler

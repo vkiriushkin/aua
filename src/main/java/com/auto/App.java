@@ -7,6 +7,7 @@ import com.auto.request.CarByIdRequest;
 import com.auto.request.IDsRequest;
 import com.auto.request.ModelsRequest;
 import com.auto.request.MarksRequest;
+import com.auto.service.CarService;
 import com.google.common.base.Stopwatch;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -17,6 +18,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -31,8 +33,10 @@ public class App
 {
     public static void main( String[] args ) throws IOException {
 
-        String requiredMark = "Audi";
-        String requiredModel = "RS6";
+        String requiredMark = "Infiniti";
+        String requiredModel = "G";
+        int fromYear = 2008;
+        int toYear = 2008;
 
         Stopwatch overalStopWatch = Stopwatch.createStarted();
         System.out.println("----------------------------------------");
@@ -74,48 +78,11 @@ public class App
         Stream<Model> modelsStream = modelsList.stream().filter(model -> model.getName().equalsIgnoreCase(requiredModel));
         System.out.println("----------------------------------------");
         Model model = modelsStream.findFirst().get();
-        System.out.println("=== Found total ads: " + model.getCount() + " ===");
 
-        int totalPages = model.getCount() / 10;
-        List<Car> carList = new ArrayList<>();
-        Stopwatch stopwatch = Stopwatch.createUnstarted();
+        CarService carService = new CarService.Builder().makrId(markId).modelId(model.getId()).fromYear(fromYear).toYear(toYear).build();
+        System.out.println("=== Found total ads: " + carService.getCount() + " ===");
 
-        for (int i = 0; i <= totalPages; i++) {
-            System.out.println("----------------------------------------");
-            System.out.println("*** Getting cars from page:" + (i+1) + " ***");
-            stopwatch.start();
-
-            int modelId = model.getId();
-            IDsRequest iDsRequest = new IDsRequest(i, markId, modelId);
-            String idsJSON = iDsRequest.getIDs();
-            JsonObject resultsObject = gson.fromJson(idsJSON, JsonObject.class);
-            JsonArray asJsonArray = resultsObject.get("result").getAsJsonObject().get("search_result").getAsJsonObject().get("ids").getAsJsonArray();
-            System.out.println("----------------------------------------");
-            System.out.println("=== Found ids: " + asJsonArray.toString() + " ===");
-
-            for (JsonElement element : asJsonArray) {
-//            System.out.println("*** Getting ad for id=" + element.getAsInt() + " ***");
-                CarByIdRequest request = new CarByIdRequest(element.getAsInt());
-                String carJSON = request.getCar();
-                JsonObject autoData = gson.fromJson(carJSON, JsonObject.class).get("result").getAsJsonObject().get("auto_data").getAsJsonObject();
-                Car car = new Car.Builder()
-                        .carId(autoData.get("auto_id").getAsInt())
-                        .markId(autoData.get("marka_id").getAsInt())
-                        .modelId(autoData.get("model_id").getAsInt())
-                        .version(autoData.get("version").getAsString())
-                        .year(autoData.get("yers").getAsInt())
-                        .engineVolume(autoData.get("engineVolume").getAsDouble())
-                        .price(autoData.get("price").getAsInt())
-                        .build();
-
-                carList.add(car);
-//                System.out.println(car.toString());
-            }
-            stopwatch.stop();
-            System.out.println("----------------------------------------");
-            System.out.println("*** Page " + (i+1) + "/" + (totalPages+1) + " done in " + stopwatch.elapsed(TimeUnit.SECONDS) + " seconds ***");
-            stopwatch.reset();
-        }
+        List<Car> carList = carService.getCars();
 
         System.out.println("----------------------------------------");
         System.out.println("*** Total average price is " + (int)carList.stream().mapToInt(Car::getPrice).average().getAsDouble()+ "$ ***");
@@ -123,11 +90,19 @@ public class App
         System.out.println("----------------------------------------");
         System.out.println("----------------------------------------");
         Map<Integer, List<Car>> collectByYear = carList.stream().collect(Collectors.groupingBy(Car::getYear));
+
         for (Map.Entry<Integer, List<Car>> entry : collectByYear.entrySet()) {
             int averagePrice = (int) entry.getValue().stream().mapToInt(Car::getPrice).average().getAsDouble();
             System.out.println("*** Year:" +entry.getKey() + ", number of ads: " + entry.getValue().size() + ", price:" + averagePrice+ "$ ***");
+            int filteredPrice = (int) entry.getValue().stream()
+                    .filter(car -> (car.getPrice() > averagePrice * 0.7) && (car.getPrice() < averagePrice * 1.3))
+                    .mapToInt(Car::getPrice).average().getAsDouble();
+            System.out.println("----------------------------------------");
+            System.out.println("*** Year:" + entry.getKey() + ", number of ads: " + entry.getValue().size() + ", price:" + filteredPrice+ "$ FILTERED***");
         }
+
         System.out.println("----------------------------------------");
+        carList.stream().mapToInt(Car::getPrice).sorted().forEach(c -> System.out.println(c));
         System.out.println("----------------------------------------");
         System.out.println("Total time:" + overalStopWatch.elapsed(TimeUnit.SECONDS) + " seconds");
     }

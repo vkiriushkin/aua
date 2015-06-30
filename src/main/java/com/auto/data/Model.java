@@ -1,10 +1,13 @@
 package com.auto.data;
 
+import com.google.gson.annotations.SerializedName;
+
 /**
  * Created by vkiriushkin on 6/15/15.
  */
 public class Model {
 
+    @SerializedName("value")
     private int id;
     private String name;
     private int count;
