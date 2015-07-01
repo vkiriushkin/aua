@@ -4,16 +4,11 @@ import com.auto.data.Mark;
 import com.auto.load.db.MarkDbLoader;
 import com.auto.load.web.MarkWebLoader;
 import com.auto.persistence.AbstractJDBCTemplate;
-import com.auto.request.MarksRequest;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.List;
 
 /**
@@ -49,8 +44,7 @@ public class MarkService {
     }
 
     public List<Mark> getAllMarks() {
-        List<Mark> markList  = dbLoader.loadAll();
-        return markList;
+        return dbLoader.loadAll();
     }
 
     public Mark getMarkById(int markId) {
@@ -59,6 +53,10 @@ public class MarkService {
 
     public Mark getMarkByName(String markName) {
         return dbLoader.loadMarkByName(markName);
+    }
+
+    public List<Mark> loadAllMarks() throws IOException {
+        return webLoader.loadMarks();
     }
 
     public static void main(String[] args) throws IOException {
