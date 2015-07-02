@@ -8,6 +8,8 @@ import com.auto.request.IDsRequest;
 import com.auto.request.ModelsRequest;
 import com.auto.request.MarksRequest;
 import com.auto.service.CarService;
+import com.auto.service.MarkService;
+import com.auto.service.ModelService;
 import com.google.common.base.Stopwatch;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -36,20 +38,17 @@ public class App
         String requiredMark = "Infiniti";
         String requiredModel = "G";
         int fromYear = 2008;
-        int toYear = 2008;
+        int toYear = 2011;
+
+        Gson gson = new Gson();
 
         Stopwatch overalStopWatch = Stopwatch.createStarted();
         System.out.println("----------------------------------------");
         System.out.println("*** Getting marks ***");
 
-        MarksRequest marksRequest = new MarksRequest();
-        String marksJSON = marksRequest.getModels();
-        System.out.println(marksJSON);
-
-        Gson gson = new Gson();
-
-        Type marksListType = new TypeToken<List<Mark>>(){}.getType();
-        List<Mark> marksList = gson.fromJson(marksJSON, marksListType);
+        MarkService markService = new MarkService();
+//        List<Mark> marksList = markService.loadAllMarks();
+        List<Mark> marksList = markService.getAllMarks();
 
         System.out.println("----------------------------------------");
         System.out.println("=== Found total marks: " + marksList.size() + " ===");
@@ -59,14 +58,10 @@ public class App
 
         //filter list of models based on required
         Stream<Mark> marksStream = marksList.stream().filter(mark -> mark.getName().equalsIgnoreCase(requiredMark));
-
         int markId = marksStream.findFirst().get().getId();
-        ModelsRequest modelsRequest = new ModelsRequest(markId);
-        String modelJSON = modelsRequest.getModels();
-        System.out.println(modelJSON);
 
-        Type modelListType = new TypeToken<List<Model>>(){}.getType();
-        List<Model> modelsList = gson.fromJson(modelJSON, modelListType);
+        ModelService modelService = new ModelService();
+        List<Model> modelsList = modelService.getModelsByMarkId(markId);
 
         System.out.println("----------------------------------------");
         System.out.println("=== Found total models: " + modelsList.size() + " ===");
@@ -92,17 +87,17 @@ public class App
         Map<Integer, List<Car>> collectByYear = carList.stream().collect(Collectors.groupingBy(Car::getYear));
 
         for (Map.Entry<Integer, List<Car>> entry : collectByYear.entrySet()) {
-            int averagePrice = (int) entry.getValue().stream().mapToInt(Car::getPrice).average().getAsDouble();
+            int averagePrice = (int) entry.getValue().stream().filter(car -> car.getPrice() > 0).mapToInt(Car::getPrice).average().getAsDouble();
             System.out.println("*** Year:" +entry.getKey() + ", number of ads: " + entry.getValue().size() + ", price:" + averagePrice+ "$ ***");
-            int filteredPrice = (int) entry.getValue().stream()
-                    .filter(car -> (car.getPrice() > averagePrice * 0.7) && (car.getPrice() < averagePrice * 1.3))
-                    .mapToInt(Car::getPrice).average().getAsDouble();
-            System.out.println("----------------------------------------");
-            System.out.println("*** Year:" + entry.getKey() + ", number of ads: " + entry.getValue().size() + ", price:" + filteredPrice+ "$ FILTERED***");
+//            int filteredPrice = (int) entry.getValue().stream()
+//                    .filter(car -> (car.getPrice() > averagePrice * 0.7) && (car.getPrice() < averagePrice * 1.3))
+//                    .mapToInt(Car::getPrice).average().getAsDouble();
+//            System.out.println("----------------------------------------");
+//            System.out.println("*** Year:" + entry.getKey() + ", number of ads: " + entry.getValue().size() + ", price:" + filteredPrice+ "$ FILTERED***");
         }
-
-        System.out.println("----------------------------------------");
-        carList.stream().mapToInt(Car::getPrice).sorted().forEach(c -> System.out.println(c));
+//
+//        System.out.println("----------------------------------------");
+//        carList.stream().mapToInt(Car::getPrice).sorted().forEach(c -> System.out.println(c));
         System.out.println("----------------------------------------");
         System.out.println("Total time:" + overalStopWatch.elapsed(TimeUnit.SECONDS) + " seconds");
     }
