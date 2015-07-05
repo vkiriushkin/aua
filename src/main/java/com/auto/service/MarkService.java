@@ -1,7 +1,7 @@
 package com.auto.service;
 
 import com.auto.data.Mark;
-import com.auto.load.db.MarkDbLoader;
+import com.auto.load.db.MarkDbManager;
 import com.auto.load.web.MarkWebLoader;
 import com.auto.persistence.AbstractJDBCTemplate;
 import org.springframework.context.ApplicationContext;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class MarkService {
 
-    private MarkDbLoader dbLoader;
+    private MarkDbManager dbManager;
     private MarkWebLoader webLoader;
 
     public MarkService() {
@@ -24,7 +24,7 @@ public class MarkService {
     }
 
     public void initLoaders() {
-        dbLoader = MarkDbLoader.getInstance();
+        dbManager = MarkDbManager.getInstance();
         webLoader = MarkWebLoader.getInstance();
     }
 
@@ -44,15 +44,15 @@ public class MarkService {
     }
 
     public List<Mark> getAllMarks() {
-        return dbLoader.loadAll();
+        return dbManager.loadAll();
     }
 
     public Mark getMarkById(int markId) {
-        return dbLoader.loadMarkById(markId);
+        return dbManager.loadMarkById(markId);
     }
 
     public Mark getMarkByName(String markName) {
-        return dbLoader.loadMarkByName(markName);
+        return dbManager.loadMarkByName(markName);
     }
 
     public List<Mark> loadAllMarks() throws IOException {

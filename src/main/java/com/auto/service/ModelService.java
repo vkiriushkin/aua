@@ -1,7 +1,7 @@
 package com.auto.service;
 
 import com.auto.data.Model;
-import com.auto.load.db.ModelDbLoader;
+import com.auto.load.db.ModelDbManager;
 import com.auto.load.web.ModelWebLoader;
 
 import java.io.IOException;
@@ -15,7 +15,7 @@ public class ModelService {
     private static final String INSERT_MODEL = "INSERT INTO AUTOSTAT.MODEL (ID,MARKID,NAME,COUNT) VALUES(?,?,?,?);";
     private static final String GET_MODELS_BY_MARK = "SELECT * FROM AUTOSTAT.MODEL WHERE MARKID=?;";
 
-    private ModelDbLoader dbLoader;
+    private ModelDbManager dbManager;
     private ModelWebLoader webLoader;
 
     public ModelService() {
@@ -23,16 +23,16 @@ public class ModelService {
     }
 
     public void initLoaders() {
-        dbLoader = ModelDbLoader.getInstance();
+        dbManager = ModelDbManager.getInstance();
         webLoader = ModelWebLoader.getInstance();
     }
 
     public List<Model> getModelsByMarkId(int markId) {
-        return dbLoader.loadModelsByMarkId(markId);
+        return dbManager.loadModelsByMarkId(markId);
     }
 
     public List<Model> getModelsByMarkName(String markName) {
-        return dbLoader.loadModelsByMarkName(markName);
+        return dbManager.loadModelsByMarkName(markName);
     }
 
     public List<Model> loadAllModels(int markId) throws IOException {

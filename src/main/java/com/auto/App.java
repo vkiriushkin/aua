@@ -1,6 +1,7 @@
 package com.auto;
 
 import com.auto.data.Car;
+import com.auto.data.Criterion;
 import com.auto.data.Model;
 import com.auto.data.Mark;
 import com.auto.request.CarByIdRequest;
@@ -37,7 +38,7 @@ public class App
 
         String requiredMark = "Infiniti";
         String requiredModel = "G";
-        int fromYear = 2008;
+        int fromYear = 2005;
         int toYear = 2011;
 
         Gson gson = new Gson();
@@ -61,7 +62,8 @@ public class App
         int markId = marksStream.findFirst().get().getId();
 
         ModelService modelService = new ModelService();
-        List<Model> modelsList = modelService.getModelsByMarkId(markId);
+//        List<Model> modelsList = modelService.getModelsByMarkId(markId);
+        List<Model> modelsList = modelService.loadAllModels(markId);
 
         System.out.println("----------------------------------------");
         System.out.println("=== Found total models: " + modelsList.size() + " ===");
@@ -74,10 +76,15 @@ public class App
         System.out.println("----------------------------------------");
         Model model = modelsStream.findFirst().get();
 
-        CarService carService = new CarService.Builder().makrId(markId).modelId(model.getId()).fromYear(fromYear).toYear(toYear).build();
-        System.out.println("=== Found total ads: " + carService.getCount() + " ===");
+        Criterion criterion = new Criterion.Builder().makrId(markId).modelId(model.getId()).fromYear(fromYear).toYear(toYear).build();
+        CarService carService = new CarService();
+        System.out.println("=== Found total ads: " + carService.loadCount(criterion) + " ===");
 
-        List<Car> carList = carService.getCars();
+        List<Car> carList = carService.loadCars(criterion);
+
+        System.out.println("----------------------------------------");
+        System.out.println("*** Saving cars to DB ***");
+        carList.forEach(carService::saveCar);
 
         System.out.println("----------------------------------------");
         System.out.println("*** Total average price is " + (int)carList.stream().mapToInt(Car::getPrice).average().getAsDouble()+ "$ ***");

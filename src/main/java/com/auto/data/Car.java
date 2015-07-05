@@ -84,6 +84,26 @@ public class Car {
         return year;
     }
 
+    public int getCarId() {
+        return carId;
+    }
+
+    public int getMarkId() {
+        return markId;
+    }
+
+    public int getModelId() {
+        return modelId;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public double getEngineVolume() {
+        return engineVolume;
+    }
+
     @Override
     public String toString() {
         return "Car{" +

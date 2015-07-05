@@ -1,6 +1,5 @@
 package com.auto.load.db;
 
-import com.auto.data.Mark;
 import com.auto.data.Model;
 import com.auto.persistence.AbstractJDBCTemplate;
 import org.springframework.context.ApplicationContext;
@@ -9,7 +8,7 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import java.util.List;
 
-public class ModelDbLoader {
+public class ModelDbManager {
 
     private static final String INSERT_MARK = "INSERT INTO AUTOSTAT.MARK (ID,NAME,COUNT) VALUES(?,?,?);";
 
@@ -20,18 +19,18 @@ public class ModelDbLoader {
     private static final String SELECT_MARK_BY_ID = "SELECT ID,NAME,COUNT FROM AUTOSTAT.MARK where ID=?";
     private static final String SELECT_MARK_BY_NAME = "SELECT ID,NAME,COUNT FROM AUTOSTAT.MARK where NAME=?";
 
-    private static ModelDbLoader dbLoader;
+    private static ModelDbManager dbManager;
 
     private AbstractJDBCTemplate jdbcTemplate;
 
-    public static ModelDbLoader getInstance() {
-        if (dbLoader == null)
-            dbLoader = new ModelDbLoader();
+    public static ModelDbManager getInstance() {
+        if (dbManager == null)
+            dbManager = new ModelDbManager();
 
-        return dbLoader;
+        return dbManager;
     }
 
-    private ModelDbLoader() {
+    private ModelDbManager() {
         //TODO:change to spring injection
         ApplicationContext context = new ClassPathXmlApplicationContext("ApplicationContext.xml");
         jdbcTemplate = (AbstractJDBCTemplate)context.getBean("autoJDBCTemplate");

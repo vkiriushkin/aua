@@ -8,25 +8,25 @@ import org.springframework.jdbc.core.BeanPropertyRowMapper;
 
 import java.util.List;
 
-public class MarkDbLoader {
+public class MarkDbManager {
 
     private static final String INSERT_MARK = "INSERT INTO AUTOSTAT.MARK (ID,NAME,COUNT) VALUES(?,?,?);";
     private static final String SELECT_ALL_MARKS = "SELECT ID,NAME,COUNT FROM AUTOSTAT.MARK";
     private static final String SELECT_MARK_BY_ID = "SELECT ID,NAME,COUNT FROM AUTOSTAT.MARK where ID=?";
     private static final String SELECT_MARK_BY_NAME = "SELECT ID,NAME,COUNT FROM AUTOSTAT.MARK where NAME=?";
 
-    private static MarkDbLoader dbLoader;
+    private static MarkDbManager dbManager;
 
     private AbstractJDBCTemplate jdbcTemplate;
 
-    public static MarkDbLoader getInstance() {
-        if (dbLoader == null)
-            dbLoader = new MarkDbLoader();
+    public static MarkDbManager getInstance() {
+        if (dbManager == null)
+            dbManager = new MarkDbManager();
 
-        return dbLoader;
+        return dbManager;
     }
 
-    private MarkDbLoader() {
+    private MarkDbManager() {
         //TODO:change to spring injection
         ApplicationContext context = new ClassPathXmlApplicationContext("ApplicationContext.xml");
         jdbcTemplate = (AbstractJDBCTemplate)context.getBean("autoJDBCTemplate");
