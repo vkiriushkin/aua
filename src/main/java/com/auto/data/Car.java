@@ -5,7 +5,7 @@ package com.auto.data;
  */
 public class Car {
 
-    private int carId;
+    private long carId;
     private int markId;
     private int modelId;
     private String version;
@@ -25,7 +25,7 @@ public class Car {
 
 
     public static final class Builder {
-        private int carId;
+        private long carId;
         private int markId;
         private int modelId;
         private String version;
@@ -36,7 +36,7 @@ public class Car {
         public Builder() {
         }
 
-        public Builder carId(int carId) {
+        public Builder carId(long carId) {
             this.carId = carId;
             return this;
         }
@@ -84,7 +84,7 @@ public class Car {
         return year;
     }
 
-    public int getCarId() {
+    public long getCarId() {
         return carId;
     }
 

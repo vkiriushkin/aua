@@ -14,13 +14,15 @@ public class UserService {
         return userManager.createUser(userName, password);
     }
 
-    public long isRegistered(String userName, String password) {
+    public long getUser(String userName, String password) {
         return userManager.getUserId(userName, password);
     }
 
     public static void main(String[] args) {
         UserService service = new UserService();
 //        service.createUser("test","test1");
-        System.out.println(service.createUser("test2", "test3"));
+//        service.createUser("test1","test2");
+//        System.out.println(service.createUser("test2", "test3"));
+        System.out.println(service.getUser("test3", "test3"));
     }
 }

@@ -2,26 +2,15 @@ package com.auto;
 
 import com.auto.data.Car;
 import com.auto.data.Criterion;
-import com.auto.data.Model;
 import com.auto.data.Mark;
-import com.auto.request.CarByIdRequest;
-import com.auto.request.IDsRequest;
-import com.auto.request.ModelsRequest;
-import com.auto.request.MarksRequest;
+import com.auto.data.Model;
 import com.auto.service.CarService;
 import com.auto.service.MarkService;
 import com.auto.service.ModelService;
 import com.google.common.base.Stopwatch;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -72,6 +61,7 @@ public class App
         System.out.println("*** Getting total number of ids by mark and model ***");
 
         //filter list of marks based on required
+        System.out.printf(modelsList.toString());
         Stream<Model> modelsStream = modelsList.stream().filter(model -> model.getName().equalsIgnoreCase(requiredModel));
         System.out.println("----------------------------------------");
         Model model = modelsStream.findFirst().get();
@@ -84,7 +74,7 @@ public class App
 
         System.out.println("----------------------------------------");
         System.out.println("*** Saving cars to DB ***");
-        carList.forEach(carService::saveCar);
+//        carList.forEach(carService::saveCar);
 
         System.out.println("----------------------------------------");
         System.out.println("*** Total average price is " + (int)carList.stream().mapToInt(Car::getPrice).average().getAsDouble()+ "$ ***");

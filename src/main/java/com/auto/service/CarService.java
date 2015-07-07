@@ -30,6 +30,10 @@ public class CarService {
         return webLoader.loadCars(criterion);
     }
 
+    public Car loadCarById(long carId) throws IOException {
+        return webLoader.loadCarById(carId);
+    }
+
     public void saveCar(Car car) {
         dbManager.saveCar(car);
     }
